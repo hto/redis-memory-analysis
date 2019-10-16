@@ -2,6 +2,7 @@ package storages
 
 import (
 	"bytes"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -39,25 +40,37 @@ func (client RedisClient) Select(db uint64) error {
 	return err
 }
 
-func (client RedisClient) GetDatabases() (map[uint64]string, error) {
-	var databases = make(map[uint64]string)
+func (client RedisClient) GetDatabases() (map[uint64]uint64, error) {
 
+	var databases = make(map[uint64]uint64)
 	reply, err := client.conn.Do("INFO", "Keyspace")
 	keyspace, err := redis.String(reply, err)
 	keyspace = strings.Trim(keyspace[12:], "\n")
 	keyspaces := strings.Split(keyspace, "\r")
 
 	for _, db := range keyspaces {
-		strs := strings.Split(db, ":")
-		strs[0] = strings.Trim(strs[0], "\n")
-		if strs[0] == "" {
+		dbKeysParse := strings.Split(db, ",")
+		if dbKeysParse[0] == "" {
 			continue
 		}
 
-		dbi, _ := strconv.ParseUint(strs[0][2:], 10, 64)
-		databases[dbi] = strs[1]
+		dbKeysParsed := strings.Split(dbKeysParse[0], ":")
+		dbNo, _ := strconv.ParseUint(dbKeysParsed[0][2:], 10, 64)
+		dbKeySize, _ := strconv.ParseUint(dbKeysParsed[1][5:], 10, 64)
+		databases[dbNo] = dbKeySize
 	}
+	fmt.Println(databases)
 	return databases, err
+}
+
+func (client RedisClient) GetCluster() {
+
+	// ab7628bc43960b4852df55fe1db5177f43bddbba 172.31.37.103:6379@1122 slave 4704b073d11db1512935f2acd587d59f2efa1da0 0 1571211331000 1 connected
+	reply, err := client.conn.Do("CLUSTER", "NODES")
+	keyspace, err := redis.String(reply, err)
+	fmt.Println(keyspace, reply)
+
+	return
 }
 
 func (client RedisClient) Scan(cursor *uint64, match string, limit uint64) ([]string, error) {

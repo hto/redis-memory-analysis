@@ -3,13 +3,13 @@ Redis memory analysis
 
 🔎  Analyzing memory of redis is to find the keys(prefix) which used a lot of memory, export the analysis result into csv file.
 
-[![GoDoc](https://godoc.org/github.com/hhxsv5/go-redis-memory-analysis?status.svg)](https://godoc.org/github.com/hhxsv5/go-redis-memory-analysis)
-[![Go Report Card](https://goreportcard.com/badge/github.com/hhxsv5/go-redis-memory-analysis)](https://goreportcard.com/report/github.com/hhxsv5/go-redis-memory-analysis)
-[![Sourcegraph](https://sourcegraph.com/github.com/hhxsv5/go-redis-memory-analysis/-/badge.svg)](https://sourcegraph.com/github.com/hhxsv5/go-redis-memory-analysis?badge)
+[![GoDoc](https://godoc.org/github.com/hto/redis-memory-analysis?status.svg)](https://godoc.org/github.com/hto/redis-memory-analysis)
+[![Go Report Card](https://goreportcard.com/badge/github.com/hto/redis-memory-analysis)](https://goreportcard.com/report/github.com/hto/redis-memory-analysis)
+[![Sourcegraph](https://sourcegraph.com/github.com/hto/redis-memory-analysis/-/badge.svg)](https://sourcegraph.com/github.com/hto/redis-memory-analysis?badge)
 
 ## Binary File Usage
 
-1. Download the appropriate binary file from [Releases](https://github.com/hhxsv5/go-redis-memory-analysis/releases)
+1. Download the appropriate binary file from [Releases](https://github.com/hto/redis-memory-analysis/releases)
 
 2. Run
 
@@ -44,7 +44,7 @@ Usage of ./redis-memory-analysis-darwin-amd64:
 ```Shell
 //cd your-root-folder-of-project
 // dep init
-dep ensure -add github.com/hhxsv5/go-redis-memory-analysis@~2.0.0
+dep ensure -add github.com/hto/redis-memory-analysis@~2.0.0
 ```
 
 2. Run
@@ -103,7 +103,7 @@ if err == nil {
 }
 ```
 
-![CSV](https://raw.githubusercontent.com/hhxsv5/go-redis-memory-analysis/master/examples/demo.png)
+![CSV](https://raw.githubusercontent.com/hto/redis-memory-analysis/master/examples/demo.png)
 
 ## Another tool implemented by PHP
 
@@ -112,4 +112,4 @@ if err == nil {
 
 ## License
 
-[MIT](https://github.com/hhxsv5/go-redis-memory-analysis/blob/master/LICENSE)
+[MIT](https://github.com/hto/redis-memory-analysis/blob/master/LICENSE)

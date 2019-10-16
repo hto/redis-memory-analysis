@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hhxsv5/go-redis-memory-analysis/storages"
+	"github.com/hto/redis-memory-analysis/storages"
 )
 
 type AnalysisConnection struct {
@@ -31,7 +31,7 @@ func (analysis *AnalysisConnection) Close() {
 
 func (analysis AnalysisConnection) Start(delimiters []string) {
 	fmt.Println("Starting analysis")
-	match := "*[" + strings.Join(delimiters, "") + "]*"
+
 	databases, _ := analysis.redis.GetDatabases()
 
 	var (
@@ -44,35 +44,34 @@ func (analysis AnalysisConnection) Start(delimiters []string) {
 		mr     KeyReports
 	)
 
-	for db, _ := range databases {
+	for db, keyCount := range databases {
 		fmt.Println("Analyzing db", db)
 		cursor = 0
 		mr = KeyReports{}
 
+		fmt.Println(db, keyCount)
 		_ = analysis.redis.Select(db)
 
 		for {
-			keys, _ := analysis.redis.Scan(&cursor, match, 3000)
-			fd, fp, tmp, nk := "", 0, 0, ""
+			fmt.Println(cursor)
+			keys, _ := analysis.redis.Scan(&cursor, "*", keyCount)
+			groupKey := ""
 			for _, key := range keys {
-				fd, fp, tmp, nk, ttl = "", 0, 0, "", 0
 				for _, delimiter := range delimiters {
-					tmp = strings.Index(key, delimiter)
-					if tmp != -1 && (tmp < fp || fp == 0) {
-						fd, fp = delimiter, tmp
+					tmp := strings.Split(key, delimiter)
+					if len(tmp) > 1 {
+						groupKey = strings.Join(tmp[0:len(tmp)-1], delimiter) + delimiter + "*"
+					} else {
+						groupKey = key
 					}
 				}
 
-				if fp == 0 {
-					continue
-				}
+				fmt.Println(key, groupKey, "\n---------")
 
-				nk = key[0:fp] + fd + "*"
-
-				if _, ok := mr[nk]; ok {
-					r = mr[nk]
+				if _, ok := mr[groupKey]; ok {
+					r = mr[groupKey]
 				} else {
-					r = Report{nk, 0, 0, 0, 0}
+					r = Report{groupKey, 0, 0, 0, 0}
 				}
 
 				ttl, _ = analysis.redis.Ttl(key)
@@ -93,7 +92,7 @@ func (analysis AnalysisConnection) Start(delimiters []string) {
 				length, _ = analysis.redis.SerializedLength(key)
 				r.Size += length
 
-				mr[nk] = r
+				mr[groupKey] = r
 			}
 
 			if cursor == 0 {
@@ -109,11 +108,13 @@ func (analysis AnalysisConnection) Start(delimiters []string) {
 		sort.Sort(sr)
 
 		analysis.Reports[db] = sr
+
+		// fmt.Println(analysis.Reports)
 	}
 }
 
 func (analysis AnalysisConnection) SaveReports(folder string) error {
-	fmt.Println("Saving the results of the analysis into", folder)
+	// fmt.Println("Saving the results of the analysis into...", folder)
 	if _, err := os.Stat(folder); os.IsNotExist(err) {
 		_ = os.MkdirAll(folder, os.ModePerm)
 	}

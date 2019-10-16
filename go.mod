@@ -1,4 +1,4 @@
-module github.com/hhxsv5/go-redis-memory-analysis
+module github.com/hto/redis-memory-analysis
 
 require (
 	github.com/garyburd/redigo v1.6.0

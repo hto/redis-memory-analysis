@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hhxsv5/go-redis-memory-analysis/storages"
+	"github.com/hto/redis-memory-analysis/storages"
 	"github.com/vrischmann/rdbtools"
 )
 
