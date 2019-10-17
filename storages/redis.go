@@ -59,7 +59,6 @@ func (client RedisClient) GetDatabases() (map[uint64]uint64, error) {
 		dbKeySize, _ := strconv.ParseUint(dbKeysParsed[1][5:], 10, 64)
 		databases[dbNo] = dbKeySize
 	}
-	fmt.Println(databases)
 	return databases, err
 }
 

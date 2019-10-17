@@ -49,11 +49,9 @@ func (analysis AnalysisConnection) Start(delimiters []string) {
 		cursor = 0
 		mr = KeyReports{}
 
-		fmt.Println(db, keyCount)
 		_ = analysis.redis.Select(db)
 
 		for {
-			fmt.Println(cursor)
 			keys, _ := analysis.redis.Scan(&cursor, "*", keyCount)
 			groupKey := ""
 			for _, key := range keys {
@@ -61,12 +59,11 @@ func (analysis AnalysisConnection) Start(delimiters []string) {
 					tmp := strings.Split(key, delimiter)
 					if len(tmp) > 1 {
 						groupKey = strings.Join(tmp[0:len(tmp)-1], delimiter) + delimiter + "*"
+						break
 					} else {
 						groupKey = key
 					}
 				}
-
-				fmt.Println(key, groupKey, "\n---------")
 
 				if _, ok := mr[groupKey]; ok {
 					r = mr[groupKey]
