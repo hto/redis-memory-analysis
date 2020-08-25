@@ -75,7 +75,17 @@ func Start(delimiters []string) {
 				}
 			}
 
-			lenght, _ := redisClient.MemoryUsage(key).Result()
+			// lenght, _ := redisClient.MemoryUsage(key).Result()
+			reply, err := redisClient.DebugObject(key).Result()
+
+			lenght, _ := strconv.ParseUint("0", 10, 64)
+			if err != nil {
+
+			} else {
+				debugs := strings.Split(reply, " ")
+				items := strings.Split(debugs[4], ":")
+				lenght, _ = strconv.ParseUint(items[1], 10, 64)
+			}
 
 			r := Report{}
 			if _, ok := mr[groupKey]; ok {
